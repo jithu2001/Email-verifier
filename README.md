@@ -103,10 +103,10 @@ The program logs DNS lookup errors but continues execution to ensure uninterrupt
 
 ## License
 
-This project is open-source and available under the MIT License.
+This project is open-source
 
 ---
 
 ## Author
 
-Developed by [Your Name]. Feel free to contribute or reach out for improvements!
+Developed by Jithu. Feel free to contribute or reach out for improvements!
