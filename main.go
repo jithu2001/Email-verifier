@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/mail"
 	"os"
 	"strings"
 )
@@ -12,10 +13,21 @@ import (
 func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Printf("Domain, hasMX, hasSPF, spfRecord, hasDMARC, dmarcRecord\n")
 
-	for scanner.Scan() {
-		checkDomain(scanner.Text())
+	for {
+		fmt.Print("Enter the Mail ID (or type 'exit' to quit): ") // Prompt before user input
+		if !scanner.Scan() {
+			break
+		}
+
+		input := strings.TrimSpace(scanner.Text())
+		if input == "exit" {
+			fmt.Println("Exiting...")
+			break
+		}
+
+		verifyEmail(input)
+		fmt.Println()
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -24,7 +36,26 @@ func main() {
 
 }
 
-func checkDomain(domain string) {
+func verifyEmail(email string) {
+	parsedEmail, err := mail.ParseAddress(email)
+	if err != nil {
+		fmt.Println("Email : ", email)
+		fmt.Println("Email validity : ", false)
+		fmt.Println("Domain : ", "")
+		fmt.Println("Does it have MX : ", false)
+		fmt.Println("Does it have SPF : ", false)
+		fmt.Println("SPF Record : ")
+		fmt.Println("Does it have DMARC : ", false)
+		fmt.Println("DMARC Record : ")
+		return
+	}
+
+	domain := strings.Split(parsedEmail.Address, "@")[1]
+
+	checkDomain(email, domain)
+}
+
+func checkDomain(email, domain string) {
 	var hasMX, hasSPF, hasDMARC bool
 	var spfRecord, dmarcRecord string
 
@@ -61,6 +92,13 @@ func checkDomain(domain string) {
 		}
 	}
 
-	fmt.Printf("%v, %v, %v, %v, %v, %v", domain, hasMX, hasSPF, spfRecord, hasDMARC, dmarcRecord)
+	fmt.Println("Email : ", email)
+	fmt.Println("Email validity : ", true)
+	fmt.Println("Domain : ", domain)
+	fmt.Println("Does it have MX : ", hasMX)
+	fmt.Println("Does it have SPF : ", hasSPF)
+	fmt.Println("SPF Record : ", spfRecord)
+	fmt.Println("Does it have DMARC : ", hasDMARC)
+	fmt.Println("DMARC Record : ", dmarcRecord)
 
 }
